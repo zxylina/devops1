@@ -55,6 +55,7 @@ def idc_detail(request, pk, *args, **kwargs):
         idc.delete()
         return HttpResponse(status=204)
 
+
 ##########################  版本二   ############################
 from rest_framework.decorators import api_view
 from rest_framework import status
@@ -117,6 +118,7 @@ def api_root(request, format=None, *args, **kwargs):
         'idc': reverse('idc-list', request=request, format=format)
     })
 
+
 ##########################  版本三   ############################
 from rest_framework.views import APIView
 from django.http import Http404
@@ -147,9 +149,7 @@ class IdcDetail(APIView):
 
     def get(self, request, pk, format=None):
         idc = self.get_object(pk)
-        print(idc)
         serializer = IdcSerializer(idc)
-        print(serializer)
         return Response(serializer.data)
 
     def put(self, request, pk, format=None):
@@ -164,3 +164,58 @@ class IdcDetail(APIView):
         idc = self.get_object(pk)
         idc.delete()
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+
+##########################  版本四   ############################
+from rest_framework import mixins, generics
+
+
+class IdcList_V4(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
+    queryset = Idc.objects.all()
+    serializer_class = IdcSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+class IdcDetail_V4(generics.GenericAPIView, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
+    queryset = Idc.objects.all()
+    serializer_class = IdcSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+
+##########################  版本五   ############################
+class IdcList_V5(generics.ListCreateAPIView):
+    queryset = Idc.objects.all()
+    serializer_class = IdcSerializer
+
+
+class IdcDetail_V5(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Idc.objects.all()
+    serializer_class = IdcSerializer
+
+
+##########################  版本六   ############################
+from rest_framework import viewsets
+
+
+class IdcListViewset(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.DestroyModelMixin, mixins.UpdateModelMixin):
+    queryset = Idc.objects.all()
+    serializer_class = IdcSerializer
+
+
+##########################  版本七   ############################
+class IdcViewset_v7(viewsets.ModelViewSet):
+    queryset = Idc.objects.all()
+    serializer_class = IdcSerializer
