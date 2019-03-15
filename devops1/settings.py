@@ -11,10 +11,11 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+sys.path.insert(0,os.path.join(BASE_DIR, "apps"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -37,14 +38,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'idcs.apps.IdcsConfig',
+    'rest_framework',
+    'apps.idcs.apps.IdcsConfig',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -75,10 +77,17 @@ WSGI_APPLICATION = 'devops1.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
+import pymysql
+pymysql.install_as_MySQLdb()
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'devops1',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
+        'PORT': '3306'
     }
 }
 
@@ -105,9 +114,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-hans'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
@@ -120,3 +129,98 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+# STATICFILES_DIRS = (
+#     os.path.join(BASE_DIR, 'static')
+# )
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+        "default": {
+            "format": '%(asctime)s %(name)s %(lineno)s %(levelname)s  %(message)s',
+            "datefmt": "%Y-%m-%d %H:%M:%S"
+        }
+    },
+
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'default'
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': 'E:\PyCharm_Project\devops1\logs\debug.log',
+            'when': "D",
+            'interval': 1,
+            'formatter': 'default'
+        },
+        "request": {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'E:\PyCharm_Project\devops1\logs\\request.log',
+            'formatter': 'default'
+        },
+        "server": {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'E:\PyCharm_Project\devops1\logs\server.log',
+            'formatter': 'default'
+        },
+        "root": {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'E:\PyCharm_Project\devops1\logs\\root.log',
+            'formatter': 'default'
+        },
+
+        "db_backends": {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'E:\PyCharm_Project\devops1\logs\db_backends.log',
+            'formatter': 'default'
+        }
+    },
+    'loggers': {
+        "reboot": {
+            "level": "DEBUG",
+            "handlers": ["console", "file"],
+            'propagate': True,
+        },
+        "django": {
+            "level": "DEBUG",
+            "handlers": ["console", "file"],
+            'propagate': True,
+        },
+        "django.request": {
+            "level": "DEBUG",
+            "handlers": ["request"],
+            'propagate': False,
+        },
+        "django.server": {
+            "level": "DEBUG",
+            "handlers": ["server"],
+            'propagate': False,
+        },
+        "django.db.backends": {
+            "level": "DEBUG",
+            "handlers": ["db_backends"],
+            'propagate': False,
+        }
+    },
+    'root':{
+        "level": "DEBUG",
+        "handlers": ["file"]
+    }
+}
+
+# LOGGING = {}
