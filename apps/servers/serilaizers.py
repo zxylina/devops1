@@ -36,7 +36,6 @@ class ServerAutoReportSerializer(serializers.Serializer):
         return attrs
 
     def create_server(self, validated_data):
-        print("create")
         network = validated_data.pop("network")
         server_obj = Server.objects.create(**validated_data)
         self.check_server_network_device(server_obj, network)
@@ -57,7 +56,6 @@ class ServerAutoReportSerializer(serializers.Serializer):
             return self.update_server(server_obj, validated_data)
 
     def update_server(self, instance, validated_data):
-        print("update")
         instance.hostname = validated_data.get("hostname", instance.hostname)
         instance.cpu = validated_data.get("cpu", instance.cpu)
         instance.ip = validated_data.get("ip", instance.ip)
@@ -104,10 +102,9 @@ class ServerAutoReportSerializer(serializers.Serializer):
 
 
     def create_network_device(self,server_obj, device):
-        ips = device.pop("ips")
+        device.pop("ips")
         device["host"] = server_obj
         network_device_obj = NetworkDevice.objects.create(**device)
-        self.check_ip(network_device_obj, ips)
         return network_device_obj
 
 
