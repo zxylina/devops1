@@ -6,6 +6,8 @@ from .models import Server,NetworkDevice,IP
 from .serilaizers import ServerAutoReportSerializer,NetworkDeviceSerializer,IPSerializer, ServerSerializer
 # from django_filters.rest_framework import DjangoFilterBackend
 # from .filter import ServerFilter
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import ServerFilter
 
 
 class ServerAutoReportViewset(mixins.CreateModelMixin,viewsets.GenericViewSet):
@@ -26,10 +28,13 @@ class ServerViewset(viewsets.ReadOnlyModelViewSet):
     queryset = Server.objects.all()
     serializer_class = ServerSerializer
     # filter_class = ServerFilter
+    # filter_fields = ("hostname",)
+    # extra_perm_map = {
+    #     "GET": ['servers.view_server']
+    # }
+    # filter_backends = (DjangoFilterBackend,)
+    filter_class = ServerFilter
     filter_fields = ("hostname",)
-    extra_perm_map = {
-        "GET": ['servers.view_server']
-    }
 
 
 class NetworkDeviceViewset(viewsets.ReadOnlyModelViewSet):

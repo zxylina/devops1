@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_filters',
     'apps.idcs.apps.IdcsConfig',
     'users.apps.UsersConfig',
     'cabinet.apps.CabinetConfig',
@@ -139,6 +140,14 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 # STATICFILES_DIRS = (
 #     os.path.join(BASE_DIR, 'static')
 # )
+REST_FRAMEWORK = {
+    "PAGE_SIZE": 10,
+    # "DEFAULT_PAGINATION_CLASS":"rest_framework.pagination.PageNumberPagination",
+    "DEFAULT_PAGINATION_CLASS": "users.pagination.Pagination",
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
+}
 
 LOGGING = {
     'version': 1,
